@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Menu de Favoritos · Profissional</title>
+    <!-- Font Awesome 6 (gratuito e leve) para ícones modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e9eff5 0%, #dce3ec 100%);
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, 'Roboto', sans-serif;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        /* card principal – menu centralizado */
+        .menu-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(1px);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        /* cabeçalho */
+        .menu-header {
+            background: #0a2b3e;
+            padding: 1.4rem 2rem;
+            color: white;
+            border-bottom: 1px solid #1f4e6e;
+        }
+        .menu-header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .menu-header h1 i {
+            font-size: 1.8rem;
+            color: #6bc2e8;
+        }
+        .menu-header p {
+            margin-top: 0.4rem;
+            font-size: 0.9rem;
+            opacity: 0.75;
+        }
+
+        /* área da árvore de menus */
+        .tree-menu {
+            padding: 1.8rem 1.5rem 2rem 1.8rem;
+        }
+
+        /* lista raiz */
+        .tree, .tree ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .tree li {
+            position: relative;
+            margin: 0.2rem 0;
+            line-height: 1.45;
+        }
+        /* itens do tipo pasta (toggle) */
+        .folder-item {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            cursor: pointer;
+            user-select: none;
+            padding: 0.4rem 0.3rem 0.4rem 0;
+            border-radius: 14px;
+            transition: background 0.2s;
+            font-weight: 500;
+            color: #1e2f3e;
+        }
+        .folder-item:hover {
+            background: #eef3fc;
+        }
+        .folder-item i {
+            width: 1.8rem;
+            font-size: 1.2rem;
+            color: #e9a23b;
+            transition: transform 0.2s;
+        }
+        .folder-item .fa-folder-open {
+            color: #f4b942;
+        }
+        .folder-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 1rem;
+            letter-spacing: -0.2px;
+        }
+        /* ícone de toggle (seta) */
+        .toggle-icon {
+            margin-left: 0.5rem;
+            font-size: 0.75rem;
+            color: #6c86a3;
+            transition: transform 0.2s;
+            width: 1.2rem;
+            text-align: center;
+        }
+
+        /* sublista – oculta por padrão */
+        .tree ul {
+            padding-left: 1.6rem;
+            margin-left: 0.2rem;
+            border-left: 1px dashed #cbdae9;
+            display: none;
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+        }
+        .tree ul.open {
+            display: block;
+        }
+
+        /* links (favoritos) */
+        .link-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.4rem 0.3rem 0.4rem 0;
+            border-radius: 12px;
+            transition: all 0.15s;
+        }
+        .link-item a {
+            text-decoration: none;
+            color: #1f4973;
+            font-weight: 450;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-size: 0.94rem;
+            padding: 0.2rem 0;
+        }
+        .link-item a i {
+            width: 1.8rem;
+            font-size: 1rem;
+            color: #3c7eb0;
+            text-align: center;
+        }
+        .link-item a:hover {
+            color: #0b5e8a;
+            text-decoration: underline;
+        }
+        .link-item:hover {
+            background: #f1f6fd;
+        }
+
+        /* ajuste para ícone dentro de link sem espaços extras */
+        .link-item a i.fa-external-link-alt {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-left: 0.3rem;
+            width: auto;
+        }
+
+        /* pequeno espaçamento entre seções */
+        hr {
+            margin: 0.8rem 0;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, #d4e0ec, transparent);
+        }
+
+        /* responsivo */
+        @media (max-width: 680px) {
+            body {
+                padding: 1rem;
+            }
+            .tree-menu {
+                padding: 1.2rem;
+            }
+            .folder-name, .link-item a {
+                font-size: 0.88rem;
+            }
+            .tree ul {
+                padding-left: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="menu-container">
+    <div class="menu-header">
+        <h1>
+            <i class="fas fa-briefcase"></i> 
+            Profissional
+        </h1>
+        <p>Navegue pelos favoritos organizados · SENAC / UniCesumar</p>
+    </div>
+    <div class="tree-menu">
+        <ul class="tree" id="menuTree">
+            <!-- ========== SENAC ========== -->
+            <li>
+                <div class="folder-item" data-toggle="sub-senac">
+                    <i class="fas fa-folder"></i>
+                    <span class="folder-name">SENAC</span>
+                    <i class="fas fa-chevron-right toggle-icon"></i>
+                </div>
+                <ul id="sub-senac">
+                    <!-- ADMINISTRATIVO (com PTD) -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-adm">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">Administrativo</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-adm">
+                            <!-- PASTA PTD -->
+                            <li>
+                                <div class="folder-item" data-toggle="sub-ptd">
+                                    <i class="fas fa-folder"></i>
+                                    <span class="folder-name">PTD</span>
+                                    <i class="fas fa-chevron-right toggle-icon"></i>
+                                </div>
+                                <ul id="sub-ptd">
+                                    <li class="link-item">
+                                        <a href="https://senacpr-my.sharepoint.com/personal/jessica_zamudio_pr_senac_br/_layouts/15/onedrive.aspx?e=5%3A968f37a2a122427591e8ddf25f879e1e&sharingv2=true&fromShare=true&at=9&CT=1778850324334&OR=OWA%2DNT%2DMail&CID=c0948e02%2Dd77f%2D7410%2Dc673%2D34adcfcab6a2&id=%2Fpersonal%2Fjessica%5Fzamudio%5Fpr%5Fsenac%5Fbr%2FDocuments%2FFORMUL%C3%81RIOS%20DE%20AVALIA%C3%87%C3%83O%2FTEPT%20ROBERTA%2FENSINO%20M%C3%89DIO%2FTURMAS%202026&FolderCTID=0x012000C0A8B3899949E24888222FECB451EA06&view=0" target="_blank" rel="noopener noreferrer">
+                                            <i class="fas fa-link"></i> Turmas 2026 - PTD
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <!-- Demais links do administrativo -->
+                            <li class="link-item"><a href="https://sociedadeeducacional154045.rm.cloudtotvs.com.br/FrameHTML/Web/App/RH/PortalMeuRH/#/login" target="_blank"><i class="fas fa-chalkboard-user"></i> TOTVS MEU RH</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/r/personal/cristiano_papke_pr_senac_br/_layouts/15/Doc.aspx?sourcedoc=%7BE27D96DB-3984-4CBE-9E3E-D06E77215EDB%7D&file=CRONOGRAMA%20-%20LONDRINA%20NORTE%20E%20BVP%20-%202026.xlsx&fromShare=true&action=default&mobileredirect=true" target="_blank"><i class="fas fa-calendar-alt"></i> CRONOGRAMA - LONDRINA NORTE E BVP - 2026.xlsx</a></li>
+                            <li class="link-item"><a href="https://www.pr.senac.br/orionweb/site/login.asp?tipoLogin=1" target="_blank"><i class="fas fa-globe"></i> OrionWeb</a></li>
+                            <li class="link-item"><a href="https://www.pr.senac.br/biblioteca/" target="_blank"><i class="fas fa-book"></i> Biblioteca</a></li>
+                            <li class="link-item"><a href="https://platform.senior.com.br/senior-x/#/" target="_blank"><i class="fas fa-chart-line"></i> Plataforma de Gestão | Senior</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- AVALIAÇÃO -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-avaliacao">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">Avaliação</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-avaliacao">
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/r/personal/jessica_zamudio_pr_senac_br/_layouts/15/Doc.aspx?sourcedoc=%7B25E9C3D1-F6C3-4A64-B949-BA7D8E7907B1%7D&file=Formulario_avaliacao_tecnico_em_Inteligencia%20Artificial_202600068.xlsx&fromShare=true&action=default&mobileredirect=true" target="_blank"><i class="fas fa-file-excel"></i> Formulario_avaliacao_tecnico_IA</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/r/personal/jessica_zamudio_pr_senac_br/_layouts/15/Doc.aspx?sourcedoc=%7B109D037A-D96F-4216-BFB6-F12D14FAD841%7D&file=Educa%25u00e7%25u00e3o%20Financeira%201.xlsx&fromShare=true&action=default&mobileredirect=true" target="_blank"><i class="fas fa-calculator"></i> Educação Financeira 1.xlsx</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/personal/jessica_zamudio_pr_senac_br/_layouts/15/onedrive.aspx?e=5%3Ae0ab601af4494a0786efa75f123dec61&sharingv2=true&fromShare=true&at=9&CT=1778780932579&OR=OWA%2DNT%2DMail&CID=27dade06%2D4934%2Dc073%2Dbcf0%2D80000bec703a&id=%2Fpersonal%2Fjessica%5Fzamudio%5Fpr%5Fsenac%5Fbr%2FDocuments%2FFORMUL%C3%81RIOS%20DE%20AVALIA%C3%87%C3%83O%2FTEPT%20ROBERTA%2FENSINO%20M%C3%89DIO&FolderCTID=0x012000C0A8B3899949E24888222FECB451EA06&view=0" target="_blank"><i class="fas fa-folder-open"></i> Avaliações - EMTI</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- DOCUMENTAÇÃO -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-doc">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">Documentacao</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-doc">
+                            <li class="link-item"><a href="http://portal.mec.gov.br/sesu/arquivos/pdf/e04.pdf" target="_blank"><i class="fas fa-file-pdf"></i> Comunicado</a></li>
+                            <li class="link-item"><a href="https://www.planalto.gov.br/ccivil_03/_Ato2015-2018/2017/Decreto/D9235.htm" target="_blank"><i class="fas fa-gavel"></i> D9235</a></li>
+                            <li class="link-item"><a href="https://www.planalto.gov.br/ccivil_03/Leis/L9394.htm" target="_blank"><i class="fas fa-balance-scale"></i> L9394</a></li>
+                            <li class="link-item"><a href="https://www.pr.senac.br/faculdade/doctos/2025/Regimento_Faculdade_Senac_Parana_Londrina_Centro.pdf" target="_blank"><i class="fas fa-file-alt"></i> Regimento Faculdade Senac</a></li>
+                            <li class="link-item"><a href="http://www.extranet.senac.br/modelopedagogicosenac/index.html" target="_blank"><i class="fas fa-book-open"></i> Modelo Pedagógico Senac</a></li>
+                            <li class="link-item"><a href="http://www.extranet.senac.br/diretrizesnacionais/index.html" target="_blank"><i class="fas fa-landmark"></i> Diretrizes Nacionais</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:b:/g/personal/leonardo_rocha_docente_pr_senac_br/IQDH3E7igidpQL-7HyOToCXHAWZdxEGh0_v0Z20UIyBWuww?e=OGxeDM" target="_blank"><i class="fas fa-landmark"></i> Calendário IA - 2026</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- CALENDÁRIOS -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-cad">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">Calendários</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-cad">
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:b:/g/personal/leonardo_rocha_docente_pr_senac_br/IQDH3E7igidpQL-7HyOToCXHAWZdxEGh0_v0Z20UIyBWuww?e=OGxeDM" target="_blank"><i class="fas fa-landmark"></i> Calendário IA - 2026</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/g/personal/leonardo_rocha_docente_pr_senac_br/IQCqzC9fKOAUS4hMwaWKJ4JrAaJUKWEdHinMs2FuVFN57ME?e=XDs7fb" target="_blank"><i class="fas fa-landmark"></i> Calendário ADM - 2026</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- TEC-ADM -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-tecadm">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">TEC-ADM</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-tecadm">
+                            <li class="link-item"><a href="https://docs.google.com/spreadsheets/d/1zZQCJHm2Y2CPxBeiAlQswQlPvqpX8miR/edit?gid=865705232#gid=865705232" target="_blank"><i class="fas fa-table"></i> horario 2026 - ADM.xlsx</a></li>
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/r/personal/leonardo_rocha_docente_pr_senac_br/_layouts/15/Doc.aspx?sourcedoc=%7BF11A5C27-6DA0-4F72-A44A-EBFC810D8F4A%7D&file=CALEND%C3%81RIO%20EM%201%202%203%20ANO%202026.xlsx&action=default&mobileredirect=true" target="_blank"><i class="fas fa-calendar-week"></i> Cronograma aulas - ADM - 2026.xlsx</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- TEC-IA -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-tecia">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">TEC-IA</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-tecia">
+                            <li class="link-item"><a href="https://senacpr-my.sharepoint.com/:x:/r/personal/denise_belloni_pr_senac_br/_layouts/15/Doc.aspx?sourcedoc=%7BF9538458-CFC7-46AB-B9DE-21CAFC6ABCD6%7D&file=Cronograma%20aulas%20I.A..xlsx&fromShare=true&action=default&mobileredirect=true" target="_blank"><i class="fas fa-robot"></i> Cronograma aulas I.A.</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Links diretos dentro do SENAC -->
+                    <li class="link-item"><a href="https://senacpr-my.sharepoint.com/personal/jessica_zamudio_pr_senac_br/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fjessica_zamudio_pr_senac_br%2FDocuments%2FFORMUL%C3%81RIOS%20DE%20AVALIA%C3%87%C3%83O%2FTEPT%20ROBERTA&ga=1" target="_blank"><i class="fas fa-clipboard-list"></i> Avaliação de Aprendizagem</a></li>
+                    <li class="link-item"><a href="https://senacpr-my.sharepoint.com/my" target="_blank"><i class="fas fa-cloud"></i> OneDrive</a></li>
+                </ul>
+            </li>
+
+            <!-- ========== UNICESUMAR ========== -->
+            <li style="margin-top: 1rem;">
+                <div class="folder-item" data-toggle="sub-unicesumar">
+                    <i class="fas fa-folder"></i>
+                    <span class="folder-name">Unicesumar</span>
+                    <i class="fas fa-chevron-right toggle-icon"></i>
+                </div>
+                <ul id="sub-unicesumar">
+                    <li class="link-item"><a href="https://sites.google.com/view/repositorio-clusterdetecn/p%C3%A1gina-inicial?authuser=0" target="_blank"><i class="fab fa-google"></i> Repositório Cluster TI</a></li>
+                    <li class="link-item"><a href="https://intranet.unicesumar.edu.br/" target="_blank"><i class="fas fa-network-wired"></i> Intranet</a></li>
+                    <li class="link-item"><a href="https://bibliotecaweb.unicesumar.edu.br/" target="_blank"><i class="fas fa-library"></i> Pergamum - Acervo Online</a></li>
+                    <li class="link-item"><a href="https://admissao.vitru.com.br/candidato" target="_blank"><i class="fas fa-user-check"></i> Admissão</a></li>
+                    <li class="link-item"><a href="https://sociedadeeducacional154045.rm.cloudtotvs.com.br/FrameHTML/web/app/RH/PortalMeuRH/#/login" target="_blank"><i class="fas fa-id-card"></i> Meu RH</a></li>
+                    <li class="link-item"><a href="https://docs.google.com/spreadsheets/d/1ZYdXsIJ7GsBhvoLWhy-IZouBL2bg1Qw7/edit?rtpof=true&sd=true&gid=462046434#gid=462046434" target="_blank"><i class="fas fa-chalkboard"></i> CHAMADA ADS E ENG. SOFTWARE.xlsx</a></li>
+                    <li class="link-item"><a href="https://www.unicesumar.edu.br/formulario/login-ambiente-online/" target="_blank"><i class="fas fa-sign-in-alt"></i> Login AVA</a></li>
+                    <li class="link-item"><a href="https://login.microsoftonline.com/311bf579-63f2-426a-80aa-d3a26f1c0ad1/oauth2/authorize?client_id=00000003-0000-0ff1-ce00-000000000000&response_mode=form_post&response_type=code%20id_token&resource=00000003-0000-0ff1-ce00-000000000000&scope=openid&nonce=08EF58D96AD46A633BFAE5E212660D9B6E51EFCACBFA3691-42B204C5D19D6A94A447319BCA524F794962A7B627EE0F34C43E68E7077C92E2&redirect_uri=https://unicesumaredubr.sharepoint.com/_forms/default.aspx&state=OD0w&claims={"id_token":{"xms_cc":{"values":["CP1"]}}}&wsucxt=1&cobrandid=11bd8083-87e0-41b5-bb78-0bc43c8a8e8a&client-request-id=e02650a1-501b-0000-2637-2a56d0990647" target="_blank"><i class="fab fa-microsoft"></i> Sharepoint</a></li>
+                    <li class="link-item"><a href="https://docente.unicesumar.edu.br/lyceump/donline/logon.asp" target="_blank"><i class="fas fa-chalkboard-teacher"></i> Docente On-Line</a></li>
+                    <li class="link-item"><a href="https://www.unicesumar.edu.br/downloads/" target="_blank"><i class="fas fa-download"></i> Downloads, Normas e Documentos</a></li>
+                    <li class="link-item"><a href="https://studeo.unicesumar.edu.br/#!/access/login" target="_blank"><i class="fas fa-graduation-cap"></i> Studeo Unicesumar</a></li>
+                    <li class="link-item"><a href="https://vivavitru.prodtool.com.br/APP/#mod=interacaotopico&omid=16&mid=16&modal=1" target="_blank"><i class="fas fa-chalkboard"></i> VivaVitru</a></li>
+                    <li class="link-item"><a href="https://widgets.ebscohost.com/prod/customerspecific/s8048246/ssomb/mb/index.php?" target="_blank"><i class="fas fa-book-reader"></i> Minha Biblioteca</a></li>
+                    
+                    <!-- DevMobile subpasta -->
+                    <li>
+                        <div class="folder-item" data-toggle="sub-dev">
+                            <i class="fas fa-folder"></i>
+                            <span class="folder-name">DevMobile</span>
+                            <i class="fas fa-chevron-right toggle-icon"></i>
+                        </div>
+                        <ul id="sub-dev">
+                            <li class="link-item"><a href="https://github.com/ramonsl/Programacao_de_dispositivos_moveis" target="_blank"><i class="fab fa-github"></i> GitHub - ramonsl/Programacao_de_dispositivos_moveis</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="link-item"><a href="https://periodicos.unicesumar.edu.br/#:~:text=Revista%20Cesumar%20%E2%80%93%20Ci%C3%AAncias%20Humanas%20e,outras%20Institui%C3%A7%C3%B5es%20de%20Ensino%20Superior." target="_blank"><i class="fas fa-newspaper"></i> Portal de Revistas Científicas</a></li>
+                    <li class="link-item"><a href="https://www.canva.com/design/DAGraBiQm9I/zudaffdnVQeWXbzzZt__Jw/view?utm_content=DAGraBiQm9I&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hefb4db22da#20" target="_blank"><i class="fab fa-canva"></i> Ebook - Sistemas institucionais</a></li>
+                    <li class="link-item"><a href="https://proreitoria.com.br/gestor/" target="_blank"><i class="fas fa-tasks"></i> Sistema - Extensao</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // controle de toggle para pastas
+        const toggleElements = document.querySelectorAll('.folder-item[data-toggle]');
+        
+        function toggleSubmenu(folderItem) {
+            const targetId = folderItem.getAttribute('data-toggle');
+            const subUl = document.getElementById(targetId);
+            if (!subUl) return;
+            
+            const isOpen = subUl.classList.contains('open');
+            const icon = folderItem.querySelector('.toggle-icon');
+            const folderIcon = folderItem.querySelector('i:first-child');
+            
+            if (!isOpen) {
+                subUl.classList.add('open');
+                if (icon) icon.style.transform = 'rotate(90deg)';
+                if (folderIcon) {
+                    folderIcon.classList.remove('fa-folder');
+                    folderIcon.classList.add('fa-folder-open');
+                }
+            } else {
+                subUl.classList.remove('open');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+                if (folderIcon) {
+                    folderIcon.classList.remove('fa-folder-open');
+                    folderIcon.classList.add('fa-folder');
+                }
+            }
+        }
+        
+        // adiciona evento de clique em cada pasta
+        toggleElements.forEach(el => {
+            // ícone da seta já inicia fechado (submenu fechado por padrão)
+            const sub = document.getElementById(el.getAttribute('data-toggle'));
+            if (sub && !sub.classList.contains('open')) {
+                const arrow = el.querySelector('.toggle-icon');
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+                const folderIcon = el.querySelector('i:first-child');
+                if (folderIcon && folderIcon.classList.contains('fa-folder-open')) {
+                    folderIcon.classList.remove('fa-folder-open');
+                    folderIcon.classList.add('fa-folder');
+                }
+            }
+            
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleSubmenu(el);
+            });
+        });
+        
+        // abrir apenas a estrutura principal (opcional: deixar SENAC e Unicesumar recolhidas? melhor já deixar SENAC aberto para visualização)
+        const senacSub = document.getElementById('sub-senac');
+        if (senacSub) {
+            senacSub.classList.add('open');
+            const senacFolder = document.querySelector('.folder-item[data-toggle="sub-senac"]');
+            if (senacFolder) {
+                const arrow = senacFolder.querySelector('.toggle-icon');
+                if (arrow) arrow.style.transform = 'rotate(90deg)';
+                const folderIcon = senacFolder.querySelector('i:first-child');
+                if (folderIcon) {
+                    folderIcon.classList.remove('fa-folder');
+                    folderIcon.classList.add('fa-folder-open');
+                }
+            }
+        }
+        // Deixa a pasta Administrativo fechada inicialmente (mais limpo)
+        // PTD já fica fechada por padrão, mas estrutura montada corretamente
+    })();
+</script>
+</body>
+</html>
